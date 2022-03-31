@@ -1,7 +1,6 @@
 module.exports = {
   title: "凡年换酒柴1998",
   description: "天戴其苍，地履其黄。纵有千古，横有八荒。前途似海，来日方长。",
-  dest: "public",
   head: [
     [
       "link",
