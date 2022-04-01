@@ -17,3 +17,4 @@ bgImageStyle: {
   # background: 'linear-gradient(45deg,rgba(254,172,94,0.5),rgba(199,121,208,0.5),rgba(75,192,200,0.5))'
 }
 isShowTitleInHome: false
+---

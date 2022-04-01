@@ -1,7 +1,7 @@
 {
-  "name": "sly",
+  "name": "sly-blog",
   "version": "1.0.0",
-  "author": "reco_luan",
+  "author": "sly",
   "scripts": {
     "dev": "vuepress dev docs",
     "build": "vuepress build docs",

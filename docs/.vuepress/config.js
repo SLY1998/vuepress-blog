@@ -68,12 +68,12 @@ module.exports = {
         //是否显示
         show: true,
         // 层级
-        zIndex: 100,
+        zIndex: 200,
         img: {
           // false 默认图 true 换图 需要填写httpUrl地址
-          replace: false,
+          // replace: true,
           // 绝对路径
-          // httpUrl: '/blog-docs/snowflake/blue.png'
+          // httpUrl: "/vuepress-blog/docs/.vuepress/public/flower.png",
         },
       },
     ],
@@ -104,7 +104,7 @@ module.exports = {
       "vuepress-plugin-cursor-effects",
       {
         // size of the particle, default: 2
-        size: 2,
+        size: 3,
         // shape of the particle, default: 'star'
         shape: "star",
         // z-index property of the canvas, default: 999999999
