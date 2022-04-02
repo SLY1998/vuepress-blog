@@ -17,6 +17,7 @@ module.exports = {
       },
     ],
   ],
+  dest: "dist",
   theme: "reco",
   themeConfig: {
     nav: [
@@ -55,6 +56,19 @@ module.exports = {
     author: "凡年换酒柴1998🌸",
     authorAvatar: "/avatar.jpg",
     startYear: "2022",
+    // 默认值是 true 。设置为 false 来禁用所有页面的 下一篇 链接
+    nextLinks: true,
+    // 默认值是 true 。设置为 false 来禁用所有页面的 上一篇 链接
+    prevLinks: true,
+    smoothScroll: true,
+    valineConfig: {
+      appId: "5uYzH7cDzYa3ojDMwOoqOLzY-gzGzoHsz", // your appId
+      appKey: "KwaAXuHE2AQ7mNqlOdo8zzU0", // your appKey
+      visitor: true,
+      enableQQ: true,
+    },
+    mode: "light", // 默认 auto，auto 跟随系统，dark 暗色模式，light 亮色模式
+    modePicker: false, // 默认 true，false 不显示模式调节按钮，true 则显示
   },
   markdown: {
     lineNumbers: true,

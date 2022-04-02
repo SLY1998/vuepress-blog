@@ -8,6 +8,10 @@ tags:
  - vue
 ---
 
+>这是一段摘要
+
+<!-- more -->
+
 ## vuepress介绍
 
 Vue 驱动的静态网站生成器 

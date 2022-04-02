@@ -3,4 +3,4 @@ yarn.lock
 yarn.error
 package-lock.json
 
-docs/.vuepress/dist/
+dist/
