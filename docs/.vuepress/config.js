@@ -58,6 +58,11 @@ module.exports = {
         link: "/timeline/",
         icon: "reco-date",
       },
+      // {
+      //   text: "生活",
+      //   link: "/blogs/live/",
+      //   icon: "reco-date",
+      // },
     ],
     type: "blog",
     blogConfig: {
