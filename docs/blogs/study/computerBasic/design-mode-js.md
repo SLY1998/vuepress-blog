@@ -177,3 +177,141 @@ var getId = document.getElementById;
 
 ## 第三章 闭包和高阶函数
 
+### 3.1 闭包
+
+#### 3.1.2 变量的生存周期
+
+局部变量随着函数的调用结束而被销毁
+
+下面介绍一个闭包的经典应用：假设页面上有 5 个div 节点，我们通过循环来给每个 div 绑定 onclick 事件，按照索引顺序，点击第 1 个 div 时弹出0，点击第 2 个 div 时弹出 1，以此类推。代码如下：
+
+```js
+<html> 
+  <body> 
+   <div>1</div> 
+   <div>2</div> 
+   <div>3</div> 
+   <div>4</div> 
+   <div>5</div> 
+  <script> 
+    var nodes = document.getElementsByTagName( 'div' ); 
+    for ( var i = 0, len = nodes.length; i < len; i++ ){ 
+      nodes[ i ].onclick = function(){ 
+       alert ( i ); 
+      } 
+    }; 
+  </script> 
+ </body> 
+</html>
+```
+运行这段代码，点击第一个div
+
+>弹出结果是？_无论点击哪一个，弹出结果都是5_
+
+>原因？_节点的点击事件是被异步触发的，当事件被触发的时候，for循环早已经结束，此时i===5_
+
+>解决办法？利用闭包，把每次循环的i值封闭起来
+
+```js
+ for ( var i = 0, len = nodes.length; i < len; i++ ){ 
+   (function(i){
+      nodes[ i ].onclick = function(){ 
+        alert ( i ); 
+      } 
+   })(i)
+  }; 
+```
+
+#### 3.1.3 闭包的更多作用
+
+**1.封装变量**
+
+提炼函数是代码重构中的一种常见技巧。独立出来的小函数有助于代码复用，如果这些小函数有一个良好的命名，它们本身也起到了注释的作用。_如果这些小函数不需要在程序的其他地方使用，最好是把它们用闭包封闭起来。_
+
+**2.延续局部变量的寿命**
+#### 3.1.4 闭包和面向对象设计
+
+过程与数据的结合是形容面向对象中的“对象”时经常使用的表达。对象以方法的形式包含
+了过程，而闭包则是在过程中以环境的形式包含了数据。通常用面向对象思想能实现的功能，用闭包也能实现。
+
+```js
+  // 闭包
+  var extent = function(){
+    var value = 0;
+    return {
+      call:function(){
+        value++;
+        console.log(value)
+      }
+    }
+  }
+  var extent = extent();
+  extent.call() // 1
+  extent.call() // 2
+  extent.call() // 3
+
+  // 面向对象
+  var extent = {
+    value:0,
+    call:function(){
+      this.value++;
+      console.log(this.value)
+    }
+  };
+  extent.call() // 1
+  extent.call() // 2
+  extent.call() // 3
+```
+
+#### 3.1.5 用闭包实现命令模式
+
+命令模式的意图是把请求封装为对象，从而分离请求的发起者和请求的执行者之间的耦合关系。
+
+```js
+   <button id="execute">点击我执行命令</button> 
+   <button id="undo">点击我执行命令</button>
+
+   // 封装为对象
+   var Tv = {
+     open:function(){
+       console.log("打开电视机")
+     },
+     close:function(){
+       console.log("关闭电视机")
+     }
+   }
+   // 创建命令
+   var creatCommand = function(receiver){
+     var execute = function(){
+       return receiver.open()
+     };
+     var undo = function(){
+       return receiver.close()
+     }
+     return {
+       execute,
+       undo
+     }
+   }
+   // 发起命令
+   var setCommand = function(command){
+     document.getElementById( 'execute' ).onclick = function(){ 
+       command.execute(); // 输出：打开电视机
+    } 
+     document.getElementById( 'undo' ).onclick = function(){ 
+       command.undo(); // 输出：关闭电视机
+    }
+   }
+   setCommand(creatCommand(Tv))
+```
+
+>拓展：在 IE 浏览器中，由于 BOM 和 DOM 中的对象是使用 C++以 COM 对象的方式实现的，而 COM 对象的垃圾收集机制采用的是引用计数策略。在基于引用计数策略的垃圾回收机制中，如果两个对象之间形成了循环引用，那么这两个对象都无法被回收。
+
+### 3.2 高阶函数
+
+高阶函数是指至少满足下列条件之一的函数
+
+- 函数可以作为参数被传递
+- 函数可以作为返回被输出
+
+#### 函数作为返回值输出
