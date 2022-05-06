@@ -314,4 +314,131 @@ var getId = document.getElementById;
 - 函数可以作为参数被传递
 - 函数可以作为返回被输出
 
-#### 函数作为返回值输出
+# 第二部分 设计模式
+
+## 第四章 单例模式
+
+保证一个类仅有一个实例，并提供一个访问它的全局访问点
+
+### 4.4 JavaScript中的单例模式
+
+全局变量不是单例模式，但在 JavaScript 开发中，我们经常会把全局变量当成单例来使用。
+
+以下几种方式可以相对降低全局变量带来的命名污染：
+
+1. 使用命名空间
+
+2. 使用闭包封装私有变量
+### 4.5 惰性单例
+
+与全局变量结合实现惰性的单例
+
+```js
+ var getSingle = function(fn){
+    var result;
+    return function(){
+      return result||result = fn.apply(this,arguments);
+    }
+ }
+ var createLoginLayer = function(){ 
+   var div = document.createElement( 'div' ); 
+   div.innerHTML = '我是登录浮窗'; 
+   div.style.display = 'none'; 
+   document.body.appendChild( div ); 
+   return div; 
+}; 
+ var createSingleLoginLayer = getSingle( createLoginLayer ); 
+ document.getElementById( 'loginBtn' ).onclick = function(){ 
+   var loginLayer = createSingleLoginLayer(); 
+   loginLayer.style.display = 'block'; 
+};
+
+```
+
+## 第五章 策略模式
+
+定义一系列的算法，把它们一个个封装起来，并且使他们可以相互替换。
+
+一个基于策略模式的程序至少由两部分组成。第一部分是一组策略类，第二部分是环境类。
+
+### 5.2 JavaScript版本的策略模式
+
+```js
+    var strategies = {
+      "S":function(salary){
+        return salary*4;
+      },
+      "A":function(salary){
+        return salary*3;
+      },
+      "B":function(salary){
+        return salary*2;
+      },
+    };
+    var calculateBonus = function(level,salary){
+      return strategies[level](salary);
+    }
+    console.log( calculateBonus( 'S', 20000 ) ); // 输出：80000
+```
+## 第六章 代理模式
+
+### 6.3 虚拟代理实现图片预加载
+
+```js
+  var myImage = (function(){
+    var imgNode = document.createElement("img");
+		document.body.appendChild(imgNode);
+    return {
+      setSrc: function(src) {
+				imgNode.src = src
+			}
+    }
+  })()
+
+  var proxyImage = (function(){
+		var img = new Image;
+		img.onload = function(){
+			myImage.setSrc(this.src)
+		}
+		return {
+			setSrc:function(src){
+				myImage.setSrc("./imgs/序列_00000.png")
+				img.src = src
+			}
+		}
+	})()
+
+  proxyImage.setSrc("https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE4wyUh?ver=322d")
+```
+
+### 6.8 缓存代理
+
+缓存代理可以为一些开销大的运算结果提供暂时的存储，在下次计算时，如果传递进来的参数与之前一致，则可以直接返回之前存储的运算结果。
+
+```js
+   var mult = function(){
+     console.log("mult")
+     var a = 1;
+     for(var i = 0;l = arguments.length;i < l; i++) {
+       a = a*arguments[i];
+     }
+     return a
+   }
+
+   var proxyMult = (function(){
+     var cache = {};
+     return function(){
+       var args = Array.prototype.join.call(arguments,",");
+       if(args in cache){
+         return cache[args]
+       }
+       return cache[args] = mult.apply(this,arguments)
+     }
+  })()
+
+  proxyMult(1,2,3,4) // 24
+  proxyMult(1,2,3,4) // 24 但是没有调用mult
+```
+
+## 迭代器模式
+
