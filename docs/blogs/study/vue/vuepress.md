@@ -11,7 +11,7 @@ tags:
 
 Vue 驱动的静态网站生成器 
 
-[vuepress官方文档](https://vuepress.vuejs.org/zh/ "vuepress官方文档")。
+[vuepress官方文档](https://vuepress.vuejs.org/zh/)。
 
 ## 搭建博客步骤
 
