@@ -58,11 +58,6 @@ module.exports = {
         link: "/timeline/",
         icon: "reco-date",
       },
-      // {
-      //   text: "生活",
-      //   link: "/blogs/live/",
-      //   icon: "reco-date",
-      // },
     ],
     type: "blog",
     blogConfig: {
@@ -77,7 +72,6 @@ module.exports = {
       // socialLinks: [
       //   // 信息栏展示社交信息
       //   { icon: "reco-github", link: "https://github.com/recoluan", text: "1" },
-      //   { icon: "reco-npm", link: "https://www.npmjs.com/~reco_luan" },
       // ],
     },
     logo: "/logo.png",
