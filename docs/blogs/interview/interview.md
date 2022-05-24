@@ -207,3 +207,50 @@ function debounce(func, wait, immediate) {
 
 - 滚动加载，加载更多或滚到底部监听
 - 搜索框，搜索联想功能
+
+### 2.介绍下Set、Map、WeakSet 和 WeakMap 的区别？（2022.5.7）
+
+#### （1）Set
+
+类似于数组，但员是唯一且无序的，没有重复的值。
+
+Set 内部判断两个值是否不同，使用的算法叫做“Same-value-zero equality”，它类似于精确相等运算符（===），主要的区别是向 Set 加入值时认为NaN等于自身，而精确相等运算符认为NaN不等于自身。
+
+```js
+// 例一
+const set = new Set([1, 2, 3, 4, 4]);
+[...set]
+// [1, 2, 3, 4]
+
+[...new Set('ababbc')].join('')
+// "abc"
+
+// 例二
+const items = new Set([1, 2, 3, 4, 5, 5, 5, 5]);
+items.size // 5
+
+// 例三
+const set = new Set(document.querySelectorAll('div'));
+set.size // 56
+
+// 类似于
+const set = new Set();
+document
+ .querySelectorAll('div')
+ .forEach(div => set.add(div));
+set.size // 56
+
+// 属性和方法
+let s = new Set();
+s.add(1).add(2).add(2);
+// 注意2被加入了两次
+s.size // 2
+
+s.has(1) // true
+s.has(2) // true
+s.has(3) // false
+
+s.delete(2);
+s.has(2) // false
+```
+
