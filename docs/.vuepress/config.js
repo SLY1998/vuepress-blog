@@ -163,9 +163,9 @@ module.exports = {
       "dynamic-title",
       {
         showIcon: "/favicon.ico",
-        showText: "🌸加载成功了耶",
+        showText: "🌸",
         hideIcon: "/failure.ico",
-        hideText: "🥀哎呀，加载失败啦",
+        hideText: "观看进度👉99%",
         recoverTime: 2000,
       },
     ],
