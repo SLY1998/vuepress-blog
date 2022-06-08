@@ -113,7 +113,7 @@ module.exports = {
         // 默认数量
         num: 8,
         //是否显示
-        show: true,
+        show: false,
         // 层级
         zIndex: 200,
         img: {

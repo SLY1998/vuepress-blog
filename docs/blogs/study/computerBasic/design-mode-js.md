@@ -8,7 +8,19 @@ tags:
 - 计算机基础
 ---
 
->前言：找出程序中变化的地方，并将变化封装起来
+前言：找出程序中变化的地方，并将变化封装起来
+
+<!-- more -->
+
+七大基本原则：
+
+1. 单一职责原则（SRP）
+2. 开放-关闭原则（OCP）
+3. 里氏替换原则（LSP）
+4. 依赖倒转原则（DIP）
+5. 接口隔离原则（ISP）
+6. 迪米特法则（LOD）又称最少知道原则
+7. 组合、聚合复用原则（CRP）
 
 # 第一部分：基础知识
 
@@ -160,9 +172,15 @@ var getId = document.getElementById;
 
 ### 2.2 call和apply
 
+调用一个对象的方法，用另一个对象替换当前对象，可以继承另外一个对象的属性。
+
 #### 2.2.1 call和apply的区别
 
 区别仅在于传入参数形式的不同
+
+- apply()方法接收两个参数，一个是函数运行的作用域（this），另一个是参数数组。
+- call()方法不一定接受两个参数，第一个参数也是函数运行的作用域（this），但是传递给函数的参数必须列举出来。
+
 
 ```js
   func.apply( null, [ 1, 2, 3 ] );
@@ -174,6 +192,18 @@ var getId = document.getElementById;
 **1、改变this的指向**
 
 **2、借用其他对象的方法**
+
+_apply有一个巧妙的用处,就是可以**将一个数组默认的转换为一个参数列表**([param1,param2,param3]转换为param1,param2,param3)，借助apply的这点特性，所以就有了以下高效率的方法：_
+
+因为Math.max(Math.min)参数里面不支持Math.max([param1,param2])，也就是数组，但是它支持Math.max(param1,param2,param3…)，所以可以根据apply的那个特点来解决：
+
+```js
+var array = [1, 2, 3];
+var max = Math.max.apply(null, array);
+console.log(max);//3
+```
+
+
 
 ## 第三章 闭包和高阶函数
 
@@ -380,6 +410,7 @@ var getId = document.getElementById;
     }
     console.log( calculateBonus( 'S', 20000 ) ); // 输出：80000
 ```
+
 ## 第六章 代理模式
 
 ### 6.3 虚拟代理实现图片预加载
@@ -440,5 +471,137 @@ var getId = document.getElementById;
   proxyMult(1,2,3,4) // 24 但是没有调用mult
 ```
 
-## 迭代器模式
+## 第七章 迭代器模式
+
+迭代器模式是指提供一种方法顺序访问一个聚合对象中的各个元素，而又不需要暴露该对象的内部表示。
+
+迭代器模式是一种相对简单的模式，简单到很多时候我们都不认为它是一种设计模式。目前的绝大部分语言都内置了迭代器。
+
+## 第八章 发布-订阅模式
+
+发布—订阅模式又叫观察者模式，它定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知。在 JavaScript 开发中，我们一般用事件模型来替代传统的发布—订阅模式。
+
+### 如何实现发布-订阅模式？
+
+**1. 实现思路**
+
+- 创建一个对象
+- 在该对象上创建一个缓存列表（调度中心）
+- on 方法用来把函数 fn 都加到缓存列表中（订阅者注册事件到调度中心）
+- emit 方法取到 arguments 里第一个当做 event，根据 event 值去执行对应缓存列表中的函数（发布者发布事件到调度中心，调度中心处理代码）
+- off 方法可以根据 event 值取消订阅（取消订阅）
+- once 方法只监听一次，调用完毕后删除缓存函数（订阅一次）
+
+**2. demo**
+
+```js
+let eventEmitter = {
+    // 缓存列表
+    list: {},
+    // 订阅
+    on (event, fn) {
+        let _this = this;
+        // 如果对象中没有对应的 event 值，也就是说明没有订阅过，就给 event 创建个缓存列表
+        // 如有对象中有相应的 event 值，把 fn 添加到对应 event 的缓存列表里
+        (_this.list[event] || (_this.list[event] = [])).push(fn);
+        return _this;
+    },
+    // 监听一次
+    once (event, fn) {
+        // 先绑定，调用后删除
+        let _this = this;
+        function on () {
+            _this.off(event, on);
+            fn.apply(_this, arguments);
+        }
+        _this.on(event, on);
+        return _this;
+    },
+    // 取消订阅
+    off (event, fn) {
+        let _this = this;
+        let fns = _this.list[event];
+        // 如果缓存列表中没有相应的 fn，返回false
+        if (!fns) return false;
+        if (!fn) {
+            // 如果没有传 fn 的话，就会将 event 值对应缓存列表中的 fn 都清空
+            fns && (fns.length = 0);
+        } else {
+            // 若有 fn，遍历缓存列表，看看传入的 fn 与哪个函数相同，如果相同就直接从缓存列表中删掉即可
+            let cb;
+            for (let i = 0, cbLen = fns.length; i < cbLen; i++) {
+                cb = fns[i];
+                if (cb === fn || cb.fn === fn) {
+                    fns.splice(i, 1);
+                    break
+                }
+            }
+        }
+        return _this;
+    },
+    // 发布
+    emit () {
+        let _this = this;
+        // 第一个参数是对应的 event 值，直接用数组的 shift 方法取出
+        let event = [].shift.call(arguments),
+            fns = [..._this.list[event]];
+        // 如果缓存列表里没有 fn 就返回 false
+        if (!fns || fns.length === 0) {
+            return false;
+        }
+        // 遍历 event 值对应的缓存列表，依次执行 fn
+        fns.forEach(fn => {
+            fn.apply(_this, arguments);
+        });
+        return _this;
+    }
+};
+
+function user1 (content) {
+    console.log('用户1订阅了:', content);
+}
+
+function user2 (content) {
+    console.log('用户2订阅了:', content);
+}
+
+function user3 (content) {
+    console.log('用户3订阅了:', content);
+}
+
+function user4 (content) {
+    console.log('用户4订阅了:', content);
+}
+
+// 订阅
+eventEmitter.on('article1', user1);
+eventEmitter.on('article1', user2);
+eventEmitter.on('article1', user3);
+
+// 取消user2方法的订阅
+eventEmitter.off('article1', user2);
+
+eventEmitter.once('article2', user4)
+
+// 发布
+eventEmitter.emit('article1', 'Javascript 发布-订阅模式');
+eventEmitter.emit('article1', 'Javascript 发布-订阅模式');
+eventEmitter.emit('article2', 'Javascript 观察者模式');
+eventEmitter.emit('article2', 'Javascript 观察者模式');
+
+// eventEmitter.on('article1', user3).emit('article1', 'test111');
+
+/*
+    用户1订阅了: Javascript 发布-订阅模式
+    用户3订阅了: Javascript 发布-订阅模式
+    用户1订阅了: Javascript 发布-订阅模式
+    用户3订阅了: Javascript 发布-订阅模式
+    用户4订阅了: Javascript 观察者模式
+*/
+
+```
+
+## 第九章 命令模式
+
+### 9.1 命令模式的用途
 
