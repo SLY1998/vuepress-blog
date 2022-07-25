@@ -605,3 +605,113 @@ eventEmitter.emit('article2', 'Javascript 观察者模式');
 
 ### 9.1 命令模式的用途
 
+命令模式最常见的应用场景是：有时候需要向某些对象发送请求，但是并不知道请求的接收者是谁，也不知道被请求的操作是什么。
+
+### 9.3 JavaScript中的命令模式
+
+命令模式的由来，其实是回调（callback）函数的一个面向对象的替代品。
+
+JavaScript 作为将函数作为一等对象的语言，跟策略模式一样，命令模式也早已融入到了JavaScript 语言之中。运算块不一定要封装在 command.execute 方法中，也可以封装在普通函数中。函数作为一等对象，本身就可以被四处传递。即使我们依然需要请求“接收者”，那也未必使用面向对象的方式，闭包可以完成同样的功能。
+
+```js
+var setCommand = function( button, command ){ 
+   button.onclick = function(){ 
+     command.execute(); 
+   } 
+}; 
+var MenuBar = { 
+   refresh: function(){ 
+    console.log( '刷新菜单界面' ); 
+   } 
+}; 
+var RefreshMenuBarCommand = function( receiver ){ 
+   return {
+     execute:function(){ 
+         receiver.refresh(); 
+       } 
+   }
+}; 
+var refreshMenuBarCommand = RefreshMenuBarCommand( MenuBar ); 
+setCommand( button1, refreshMenuBarCommand ); 
+```
+
+### 9.4 撤销命令
+
+撤销操作的实现一般是给命令对象增加一个名为 unexecude 或者 undo 的方法，在该方法里执行 execute 的反向操作。
+
+## 第十章 组合模式
+
+### 10.7 组合模式的例子-扫描文件夹
+
+```js
+
+// 文件夹
+var Folder = function(name){
+  this.name = name;
+  this.files = [];
+}
+
+Folder.prototype.add = function(file){
+  this.files.push(file)
+}
+
+Folder.prototype.scan = function(){
+  console.log("开始扫描文件夹：" + this.name);
+  for(var i = 0 , file, files = this.files; file = files[i++];){
+    file.scan()
+  }
+}
+
+// 文件
+var File = function(name){
+  this.name = name
+}
+
+File.prototype.add = function(){
+  throw new Error("文件下面不能再添加文件")
+}
+
+File.prototype.scan = function(){
+  console.log("开始扫描文件：" + this.name);
+}
+
+// 创建文件夹和文件对象
+var folder = new Folder( '学习资料' ); 
+var folder1 = new Folder( 'JavaScript' ); 
+var folder2 = new Folder ( 'jQuery' ); 
+
+var file1 = new File( 'JavaScript 设计模式与开发实践' ); 
+var file2 = new File( '精通 jQuery' ); 
+var file3 = new File( '重构与模式' ) 
+
+folder1.add( file1 ); 
+folder2.add( file2 ); 
+
+folder.add( folder1 ); 
+folder.add( folder2 ); 
+folder.add( file3 ); 
+
+// 移动硬盘中的文件
+var folder3 = new Folder( 'Nodejs' ); 
+var file4 = new File( '深入浅出 Node.js' ); 
+
+folder3.add( file4 ); 
+var file5 = new File( 'JavaScript 语言精髓与编程实践' ); 
+
+// 硬盘=>现在的位置
+folder.add( folder3 ); 
+folder.add( file5 );
+
+// 扫描
+folder.scan();
+
+```
+
+![](./img/design-10-1.png)
+
+**注意：**
+
+- 组合模式不是父子关系，是一种 HAS-A（聚合）的关系
+- 对叶对象操作的一致性
+- 双向映射关系
+- 用职责链模式提高组合模式性能
