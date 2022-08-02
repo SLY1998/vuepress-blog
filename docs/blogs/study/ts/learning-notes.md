@@ -55,16 +55,37 @@ console.log(x[0]);    // 输出 Runoob
 ```typeScript
 enum Color {Red,Green,Blue};
 let c:Color = Color.Blue;
-console.log(c);
+console.log(c);// 输出 2
 ```
 8. void
 9. null
 10. undefined
-11. never：代表不会出现的值
+```ts
+// 启用 --strictNullChecks
+let x: number;
+x = 1; // 编译正确
+x = undefined;    // 编译错误
+x = null;    // 编译错误
+// 上面的例子中变量 x 只能是数字类型。如果一个类型可能出现 null 或 undefined， 可以用 | 来支持多种类型，示例代码如下：
+// 启用 --strictNullChecks
+let x: number | null | undefined;
+x = 1; // 编译正确
+x = undefined;    // 编译正确
+x = null;    // 编译正确
+```
+11. never：never 是其它类型（包括 null 和 undefined）的子类型，代表不会出现的值，这意味着声明为 never 类型的变量只能被 never 类型所赋值，在函数中它通常表现为抛出异常或无法执行到终止点（例如无限循环）。
 
 ### 变量声明
+
+TypeScript 变量的命名规则：
+- 变量名称可以包含数字和字母
+- 除了下划线 _ 和美元 $ 符号外，不能包含其他特殊字符，包括空格
+- 变量名不能以数字开头
+
 #### 类型断言
 类型断言可以用来手动指定一个值的类型，即允许变量从一种类型更改为另一种类型
+
+语法格式为：**<类型>值** 或 **值 as 类型**
 
 ## 20220325
 
@@ -110,4 +131,159 @@ let allDiv: NodeList = document.querySelectorAll('div');
 document.addEventListener('click', function(e: MouseEvent) {
   // Do something
 });
+```
+
+## 20220802
+
+### 运算符
+
+ts主要包括以下几种运算：
+
+- 算术运算符
+- 逻辑运算符
+- 关系运算符
+- 按位运算符
+- 赋值运算符
+- 三元、条件运算符
+- 字符串运算符
+- 类型运算符
+
+### 函数
+
+```ts
+// 函数返回值
+function function_name():return_type { 
+    // 语句
+    return value; 
+}
+
+// 带参数函数
+function func_name( param1 [:datatype], param2 [:datatype]) {   
+}
+
+function add(x: number, y: number): number {
+    return x + y;
+}
+console.log(add(1,2))
+
+// 可选参数
+// 可选参数必须跟在必需参数后面。
+// 如果我们定义了参数，则我们必须传入这些参数，除非将这些参数设置为可选，可选参数使用问号标识 ？。
+function buildName(firstName: string, lastName?: string): string {
+    if (lastName){
+      return firstName + " " + lastName;
+    }
+    else{
+      return firstName;
+    }
+}
+ 
+let result1 = buildName("Bob");  // 正确
+let result2 = buildName("Bob", "Adams", "Sr.");  // 错误，参数太多了
+let result3 = buildName("Bob", "Adams");  // 正确
+
+// 默认参数
+// 参数不能同时设置为可选和默认
+function function_name(param1[:type],param2[:type] = default_value) { 
+}
+
+// 剩余参数
+// 剩余参数语法允许我们将一个不确定数量的参数作为一个数组传入
+// 函数的最后一个命名参数 restOfName 以 ... 为前缀，它将成为一个由剩余参数组成的数组，索引值从0（包括）到 restOfName.length（不包括）
+function buildName(firstName: string, ...restOfName: string[]) {
+    return firstName + " " + restOfName.join(" ");
+}
+
+// 匿名函数
+var res = function( [arguments] ) { ... }
+
+// 匿名函数自调用
+(function () { 
+    var x = "Hello!!";   
+    console.log(x)     
+ })()
+```
+
+### 类
+
+```ts
+class Car { 
+   // 字段
+   engine:string; 
+   
+   // 构造函数
+   constructor(engine:string) { 
+      this.engine = engine 
+   }  
+   
+   // 方法
+   disp():void { 
+      console.log("函数中显示发动机型号  :   "+this.engine) 
+   } 
+} 
+ 
+// 创建一个对象
+var obj = new Car("XXSY1")
+ 
+// 访问字段
+console.log("读取发动机型号 :  "+obj.engine)  
+ 
+// 访问方法
+obj.disp()
+
+```
+
+### 命名空间
+
+```ts
+namespace SomeNameSpaceName { 
+   export interface ISomeInterfaceName {      }  
+   export class SomeClassName {      }  
+}
+```
+
+如果一个命名空间在一个单独的 TypeScript 文件中，则应使用三斜杠 /// 引用它，语法格式如下：
+```ts
+/// <reference path = "SomeFileName.ts" />
+```
+
+例如：
+
+```ts
+// IShape.ts 文件代码：
+namespace Drawing { 
+    export interface IShape { 
+        draw(); 
+    }
+}
+
+// Circle.ts 文件代码：
+/// <reference path = "IShape.ts" /> 
+namespace Drawing { 
+    export class Circle implements IShape { 
+        public draw() { 
+            console.log("Circle is drawn"); 
+        }  
+    }
+}
+
+// Triangle.ts 文件代码：
+/// <reference path = "IShape.ts" /> 
+namespace Drawing { 
+    export class Triangle implements IShape { 
+        public draw() { 
+            console.log("Triangle is drawn"); 
+        } 
+    } 
+}
+
+// TestShape.ts 文件代码：
+/// <reference path = "IShape.ts" />   
+/// <reference path = "Circle.ts" /> 
+/// <reference path = "Triangle.ts" />  
+function drawAllShapes(shape:Drawing.IShape) { 
+    shape.draw(); 
+} 
+drawAllShapes(new Drawing.Circle());
+drawAllShapes(new Drawing.Triangle());
 ```
